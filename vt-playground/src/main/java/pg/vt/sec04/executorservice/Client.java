@@ -1,0 +1,30 @@
+package pg.vt.sec04.executorservice;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+
+public class Client {
+    private static final String PRODUCT_ENDPOINT = "http://localhost:7070/sec01/product/%d";
+    private static final String RATING_ENDPOINT = "http://localhost:7070/sec01/rating/%d";
+    private static final Logger log = LoggerFactory.getLogger(Client.class);
+
+    public static String getProduct(int id){
+        return callExternalService(PRODUCT_ENDPOINT.formatted(id));
+    }
+    public static Integer getRating(int id){
+        return Integer.parseInt(
+                callExternalService(RATING_ENDPOINT.formatted(id))
+        );
+    }
+
+    private static String callExternalService(String uri){
+        log.info("Calling URI: {}", uri);
+        try(var stream = URI.create(uri).toURL().openStream()){
+            return new String(stream.readAllBytes());
+        } catch (Exception e){
+            throw new RuntimeException(e);
+        }
+    }
+}
